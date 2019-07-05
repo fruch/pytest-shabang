@@ -14,21 +14,24 @@ class ShabangFile(pytest.File):
     def collect(self):
         yield ShabangItem(os.path.relpath(self.fspath), self, self.fspath)
 
+
 class ShabangItem(pytest.Item):
     def __init__(self, name, parent, filename):
         super().__init__(name, parent)
         self.filename = filename
 
     def runtest(self):
-        subprocess.check_call(str(self.filename), stdout=sys.stdout, stderr=sys.stderr, shell=True)
-        
+        subprocess.check_call(
+            str(self.filename), stdout=sys.stdout, stderr=sys.stderr, shell=True
+        )
+
     def repr_failure(self, excinfo):
         """ called when self.runtest() raises an exception. """
         if isinstance(excinfo.value, subprocess.CalledProcessError):
             return "\n".join(
                 [
                     "execution failed with",
-                    "   returncode: %r" % excinfo.value.returncode ,
+                    "   returncode: %r" % excinfo.value.returncode,
                 ]
             )
 
